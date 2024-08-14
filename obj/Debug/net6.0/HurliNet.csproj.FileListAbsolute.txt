@@ -1,0 +1,15 @@
+c:\Users\dp\Desktop\NetHurl\bin\Debug\net6.0\HurliNet.exe
+C:\Users\dp\Desktop\NetHurl\bin\Debug\net6.0\HurliNet.deps.json
+C:\Users\dp\Desktop\NetHurl\bin\Debug\net6.0\HurliNet.runtimeconfig.json
+c:\Users\dp\Desktop\NetHurl\bin\Debug\net6.0\HurliNet.dll
+c:\Users\dp\Desktop\NetHurl\bin\Debug\net6.0\HurliNet.pdb
+c:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\HurliNet.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\HurliNet.AssemblyInfoInputs.cache
+c:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\HurliNet.AssemblyInfo.cs
+c:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\HurliNet.csproj.CoreCompileInputs.cache
+c:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\HurliNet.sourcelink.json
+c:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\HurliNet.dll
+c:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\refint\HurliNet.dll
+c:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\HurliNet.pdb
+C:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\HurliNet.genruntimeconfig.cache
+C:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\ref\HurliNet.dll
