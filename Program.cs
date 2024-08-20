@@ -21,7 +21,7 @@ string path = "C:\\Users\\dp\\Desktop\\hurlinet\\te.txt";
 
 //si existe la ruta leemos, si no vamos a obtener datos
 if (File.Exists(path))
-    {info = LeerJson(path);}
+    {info = LeerRegistry(path);}
 else
     {info.ObtenerDatos(path);}
 
@@ -53,11 +53,24 @@ void EnviarJson(Info info)
     }
 }
 
-Info LeerJson(string path)
+Info LeerRegistry(string path)
 {
-    string json = File.ReadAllText(path);
-    Info objeto = JsonSerializer.Deserialize<Info>(json);
-    return objeto;
+    //si el sistema operativo es windows leemos del registry
+    if (Environment.OSVersion.ToString().Contains("Windows"))
+    {
+        RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\NetExplorer");
+        Info info = new Info();
+        info.nro_inventario = key.GetValue("nro_inventario").ToString();
+        info.Sede = key.GetValue("Sede").ToString();
+        info.descripcion = key.GetValue("descripcion").ToString();
+        info.nro_inventario_Monitor = key.GetValue("nro_inventario_Monitor").ToString();
+        return info;
+    }
+    else
+    {
+        return new Info();
+    }
+
 }
 
 
@@ -89,7 +102,18 @@ public class Info
             Sede = Pedir("Ingrese el ID de sede, propiciado por el administrador del sistema.");
             descripcion = Pedir("Ingrese la descripcion de la ubicacion del equipo.( piso, oficina, etc)");
             nro_inventario_Monitor = Pedir("Ingrese el numero de inventario del monitor.");
-            VolcarAJson(path);
+
+            // si el SO es windows obtenemos volcamos los datos en el registry 
+            if (Environment.OSVersion.ToString().Contains("Windows"))
+            {
+                //insertamos nro de inventario sede descripcion en  el registry
+                RegistryKey key = Registry.CurrentUser.CreateSubKey(@"Software\NetExplorer");
+                key.SetValue("nro_inventario", nro_inventario);  
+                key.SetValue("Sede", Sede);  
+                key.SetValue("descripcion", descripcion);  
+                key.SetValue("nro_inventario_Monitor", nro_inventario_Monitor);  
+            }
+
     }
     public void getConectividad()
     {
