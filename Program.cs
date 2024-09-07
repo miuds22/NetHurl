@@ -73,6 +73,8 @@ namespace  NetDiscover
         public   long? espacio_libre {get;set;}
         public static readonly HttpClient client = new();
         public    string usuario = Environment.UserName;
+        public Network n = new Network();
+        public en = new Enviroment() 
     }
 }
     
