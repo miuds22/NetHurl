@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HurliNet")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+757024ba319ccca4baa57d0c9feb04785ea048f3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c261fcf080b0abb3b70adf7fceb2d656c79025ec")]
 [assembly: System.Reflection.AssemblyProductAttribute("HurliNet")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HurliNet")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
