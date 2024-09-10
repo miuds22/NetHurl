@@ -1,26 +1,12 @@
-﻿using System.Dynamic;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using Microsoft.Win32;
-using NetDiscover.Models;
+
 
 class Program
 {
-    static void Main()
-    {
-        NetDiscoverClass info = new NetDiscoverClass();
 
-    info.obtenerToken();
-    EnviarJson(info);
-
-
-
-    }
-
-
-    void EnviarJson(NetDiscover info)
+void EnviarJson(NetDiscover info)
 {
     try
     {
@@ -54,12 +40,7 @@ class Program
 
 
 
-
-namespace  NetDiscover
-{
-
-
-    public class NetDiscoverClass 
+    public class NetDiscover 
     {
         public string? nro_inventario { get;set; }
         public string? Sede { get;set; }
@@ -71,8 +52,19 @@ namespace  NetDiscover
         public string? aps_instaladas {get;set;}
         public   long? espacio_disco  {get;set;}
         public   long? espacio_libre {get;set;}
-        public static readonly HttpClient client = new();
+        internal Network network { get; private set; }
+        internal Enviroment enviroment { get; private set; }
+
+    public static readonly HttpClient client = new();
         public    string usuario = Environment.UserName;
+
+
+        static void Main()
+        {
+            NetDiscover info = new ();
+            info.network = new Network();
+            info.enviroment = new Enviroment();
+            
+        }
     }
-}
     

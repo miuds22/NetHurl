@@ -1,18 +1,22 @@
 
+using System.Text.Json;
 using Microsoft.Win32;
-namespace NetDiscover.Models {
-    class  SystemInformation {
-        String nro_inventario, Sede, descripcion, nro_inventario_Monitor, aps_instaladas, Clave_activacion; 
+
+
+class  Enviroment 
+{
+        public string nro_inventario, Sede, descripcion, nro_inventario_Monitor, aps_instaladas, Clave_activacion;
         public string SistemaOperativo = Environment.OSVersion.ToString();
+        public long   espacio_disco ,espacio_libre;
+        public int cant_discos;
 
-
-        public SystemInformation(){
-        RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\NetExplorer");
-
-        if (key != null)
-            {readRegistry();}
-        else
-            {setRegistry();}
+        public Enviroment()
+        {
+            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\NetExplorer");
+            if (key != null)
+                {readRegistry();}
+            else
+                {setRegistry();}
         }
 
         public void setRegistry()
@@ -32,72 +36,73 @@ namespace NetDiscover.Models {
                     key.SetValue("descripcion", descripcion);  
                     key.SetValue("nro_inventario_Monitor", nro_inventario_Monitor);  
                 }
-        }
+    }
 
     public void Get_memorias()
+    {
+        long sumDiscos = 0;
+        long sumLibres = 0;            
+        int cdiscos = 0;
+        DriveInfo[] drives = DriveInfo.GetDrives();
+        
+        foreach (DriveInfo drive in drives)
         {
-            long sumDiscos = 0;
-            long sumLibres = 0;            
-            int cdiscos = 0;
-            DriveInfo[] drives = DriveInfo.GetDrives();
-            
-            foreach (DriveInfo drive in drives)
+            try
             {
-                try
+                if (drive.IsReady)
                 {
-                    if (drive.IsReady)
-                    {
-                        sumDiscos = sumDiscos + drive.TotalSize;
-                        sumLibres = sumLibres + drive.TotalFreeSpace;
-                        cdiscos++;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error reading drive information: {ex.Message}");
+                    sumDiscos = sumDiscos + drive.TotalSize;
+                    sumLibres = sumLibres + drive.TotalFreeSpace;
+                    cdiscos++;
                 }
             }
-            espacio_disco = sumDiscos;
-            espacio_libre = sumLibres;
-            cant_discos = cdiscos;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading drive information: {ex.Message}");
+            }
         }
+        espacio_disco = sumDiscos;
+        espacio_disco = sumDiscos;
+        espacio_disco = sumDiscos;
+        espacio_libre = sumLibres;
+        cant_discos = cdiscos;
+    }
         
 
-        public  void obtenerApps()
+    public  void obtenerApps()
+    {
+        string[] aps = new string[500];
+        if (Environment.OSVersion.ToString().Contains("Windows"))
         {
-            string[] aps = new string[500];
-            if (Environment.OSVersion.ToString().Contains("Windows"))
+            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
+            foreach (string subKeyName in key.GetSubKeyNames())
             {
-                RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
-                foreach (string subKeyName in key.GetSubKeyNames())
+                RegistryKey subKey = key.OpenSubKey(subKeyName);
+                string displayName = (string)subKey.GetValue("DisplayName");
+                if (displayName != null)
                 {
-                    RegistryKey subKey = key.OpenSubKey(subKeyName);
-                    string displayName = (string)subKey.GetValue("DisplayName");
-                    if (displayName != null)
-                    {
-                        // armamos una lista de las aplicaciones
-                        aps[Array.IndexOf(aps, null)] = displayName;
-                    }
+                    // armamos una lista de las aplicaciones
+                    aps[Array.IndexOf(aps, null)] = displayName;
                 }
-                //devolvemos un json con las 
-                aps_instaladas = JsonSerializer.Serialize(aps);
             }
+            //devolvemos un json con las 
+            aps_instaladas = JsonSerializer.Serialize(aps);
+        }
+    }
+
+    public void obtenerCDWindows()
+    {
+        if (Environment.OSVersion.ToString().Contains("Windows"))   
+        {
+            RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+            string keyPath = @"Software\Microsoft\Windows NT\CurrentVersion";
+            byte[] rpk = (byte[])key.OpenSubKey(keyPath).GetValue("DigitalProductId");
+            Clave_activacion = DecodeProductKey(rpk);
         }
 
-        public void obtenerCDWindows(){
-            if (Environment.OSVersion.ToString().Contains("Windows"))   
-            {
-                RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
-                                                    RegistryView.Registry64);
+    }
 
-                string keyPath = @"Software\Microsoft\Windows NT\CurrentVersion";
-                byte[] rpk = (byte[])key.OpenSubKey(keyPath).GetValue("DigitalProductId");
-                Clave_activacion = DecodeProductKey(rpk);
-            }
-
-        }
-
-        public string DecodeProductKey(byte[] digitalProductId)
+    public string DecodeProductKey(byte[] digitalProductId)
     {
         // Possible alpha-numeric characters in product key.
         const string digits = "BCDFGHJKMPQRTVWXY2346789";
@@ -158,5 +163,16 @@ namespace NetDiscover.Models {
         }
 
     }
+
+    private string? Pedir(string mensaje)
+    {
+        Console.WriteLine(mensaje);
+        string? valor = Console.ReadLine();
+        if (string.IsNullOrEmpty(valor))
+            {
+                Console.WriteLine("El valor no puede ser nulo.");
+                return  Pedir(mensaje);
+            }
+        return valor;
     }
 }

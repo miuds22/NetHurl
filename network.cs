@@ -2,7 +2,6 @@
 using System.Net.NetworkInformation;
 using System.Net;
 
-namespace NetDiscover.Models {
     class  Network {
         public string publicIP ,latency  , MACgateway ,MAChost= string.Empty;
 
@@ -114,5 +113,3 @@ namespace NetDiscover.Models {
             return mac;
             }
     }
-}
-
