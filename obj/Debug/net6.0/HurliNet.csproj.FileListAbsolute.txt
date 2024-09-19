@@ -13,3 +13,10 @@ c:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\refint\HurliNet.dll
 c:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\HurliNet.pdb
 C:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\HurliNet.genruntimeconfig.cache
 C:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\ref\HurliNet.dll
+c:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\HurliNet.csproj.AssemblyReference.cache
+c:\Users\dp\Desktop\NetHurl\bin\Debug\net6.0\DotNetEnv.dll
+c:\Users\dp\Desktop\NetHurl\bin\Debug\net6.0\Microsoft.Extensions.Configuration.dll
+c:\Users\dp\Desktop\NetHurl\bin\Debug\net6.0\Microsoft.Extensions.Configuration.Abstractions.dll
+c:\Users\dp\Desktop\NetHurl\bin\Debug\net6.0\Microsoft.Extensions.Primitives.dll
+c:\Users\dp\Desktop\NetHurl\bin\Debug\net6.0\Sprache.dll
+C:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\HurliNet.csproj.Up2Date

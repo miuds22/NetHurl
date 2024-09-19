@@ -1,70 +1,59 @@
 ﻿using System.Text;
 using System.Text.Json;
 using Microsoft.Win32;
+using DotNetEnv; // Importar la biblioteca DotNetEnv
+
 
 
 class Program
 {
 
-void EnviarJson(NetDiscover info)
-{
-    try
-    {
-        string json = JsonSerializer.Serialize(info);
-        string url = "http://localhost:1025/api/Entidad/NET_Equipos_IU";
-        var client = new HttpClient();
-        
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-        client.DefaultRequestHeaders.Add("User-Agent","xxxxxxxxx");      
+        static void SendReport(NetDiscover info)
+        {
+            try
+            {
+                string json = JsonSerializer.Serialize<NetDiscover>(info);
+                requests r = new requests();
+                r.Post(json);
+            } catch
+            {
+                RegistryKey key = Registry.CurrentUser.CreateSubKey(@"Software\NetExplorerStatus");
+                key.SetValue("ultimo intento fallido:" , DateTime.Now.ToString());
+            }
+        } 
 
-        var response = client.PostAsync(url,  content).Result;
-        if (response.IsSuccessStatusCode)
+     
+
+    static void Main(string[] args)
         {
-            //agregamos log de envio correcto al registry
-            RegistryKey key = Registry.CurrentUser.CreateSubKey(@"Software\NetExplorerStatus");
-            key.SetValue("ultimo intento Exitoso:" , DateTime.Now.ToString());
+            NetDiscover info = new NetDiscover();
+            SendReport(info);
         }
-        else
-        {
-            RegistryKey key = Registry.CurrentUser.CreateSubKey(@"Software\NetExplorerStatus");
-            key.SetValue("ultimo intento fallido:" , DateTime.Now.ToString());
-        }
-    } catch
-    {
-        RegistryKey key = Registry.CurrentUser.CreateSubKey(@"Software\NetExplorerStatus");
-        key.SetValue("ultimo intento fallido:" , DateTime.Now.ToString());
-    }
-}
 }
 
 
 
 
-    public class NetDiscover 
+public class NetDiscover 
     {
-        public string? nro_inventario { get;set; }
-        public string? Sede { get;set; }
-        public string? Sector { get;set; }
-        public string? nro_inventario_Monitor { get;set; }
-        public string? descripcion { get;set; }
-        public string? Clave_activacion {get;set;}
-        public int? cant_discos {get;set;}
-        public string? aps_instaladas {get;set;}
-        public   long? espacio_disco  {get;set;}
-        public   long? espacio_libre {get;set;}
-        internal Network network { get; private set; }
-        internal Enviroment enviroment { get; private set; }
+       public Network network { get;  set; }
+       public Enviroment enviroment { get;  set; }
 
-    public static readonly HttpClient client = new();
-        public    string usuario = Environment.UserName;
+        public static readonly HttpClient client = new();
+        public    string usuario { get;  set; } = Environment.UserName;
+        public    string hostname { get;  set; }= Environment.MachineName;
+        public    string fecha { get;  set; } = DateTime.Now.ToString();
+        public    string version { get;  set; } = Environment.OSVersion.ToString();
+    
 
 
-        static void Main()
+      public NetDiscover()
         {
-            NetDiscover info = new ();
-            info.network = new Network();
-            info.enviroment = new Enviroment();
-            
+
+            fecha = DateTime.Now.ToString();
+            network = new Network();
+            enviroment = new Enviroment();
+
         }
     }
     

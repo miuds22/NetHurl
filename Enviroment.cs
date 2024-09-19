@@ -3,45 +3,31 @@ using System.Text.Json;
 using Microsoft.Win32;
 
 
-class  Enviroment 
+public class Enviroment 
 {
-        public string nro_inventario, Sede, descripcion, nro_inventario_Monitor, aps_instaladas, Clave_activacion;
-        public string SistemaOperativo = Environment.OSVersion.ToString();
-        public long   espacio_disco ,espacio_libre;
-        public int cant_discos;
+        public string nroInventory { get;  set; }
+        public string Place { get;  set; }
+        public string description { get;  set; }
+        public string screen_NroInventory { get;  set; }
+        public string installedApps { get;  set; }
+        public string serialKey { get;  set; }
+        public string OS { get;  set; } = Environment.OSVersion.ToString();
+        public long   TotalSize  { get;  set; }
+        public long TotalFreeSpace { get;  set; }
+        public int availableStorages { get;  set; }
 
         public Enviroment()
-        {
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\NetExplorer");
-            if (key != null)
-                {readRegistry();}
-            else
-                {setRegistry();}
+        {        
+            getRegistry();
+            getStorage();
+            getInstalledApps();
+            getCDWindows();
         }
 
-        public void setRegistry()
-        {
-                nro_inventario = Pedir("Ingrese el numero de inventario.");            
-                Sede = Pedir("Ingrese el ID de sede, propiciado por el administrador del sistema.");
-                descripcion = Pedir("Ingrese la descripcion de la ubicacion del equipo.( piso, oficina, etc)");
-                nro_inventario_Monitor = Pedir("Ingrese el numero de inventario del monitor.");
-
-                // si el SO es windows obtenemos volcamos los datos en el registry 
-                if (Environment.OSVersion.ToString().Contains("Windows"))
-                {
-                    //insertamos nro de inventario sede descripcion en  el registry
-                    RegistryKey key = Registry.CurrentUser.CreateSubKey(@"Software\NetExplorer");
-                    key.SetValue("nro_inventario", nro_inventario);  
-                    key.SetValue("Sede", Sede);  
-                    key.SetValue("descripcion", descripcion);  
-                    key.SetValue("nro_inventario_Monitor", nro_inventario_Monitor);  
-                }
-    }
-
-    public void Get_memorias()
+    public void getStorage()
     {
-        long sumDiscos = 0;
-        long sumLibres = 0;            
+        long sumStorage = 0;
+        long sumFree = 0;            
         int cdiscos = 0;
         DriveInfo[] drives = DriveInfo.GetDrives();
         
@@ -51,8 +37,8 @@ class  Enviroment
             {
                 if (drive.IsReady)
                 {
-                    sumDiscos = sumDiscos + drive.TotalSize;
-                    sumLibres = sumLibres + drive.TotalFreeSpace;
+                    sumStorage = sumStorage + drive.TotalSize;
+                    sumFree = sumFree + drive.TotalFreeSpace;
                     cdiscos++;
                 }
             }
@@ -61,15 +47,13 @@ class  Enviroment
                 Console.WriteLine($"Error reading drive information: {ex.Message}");
             }
         }
-        espacio_disco = sumDiscos;
-        espacio_disco = sumDiscos;
-        espacio_disco = sumDiscos;
-        espacio_libre = sumLibres;
-        cant_discos = cdiscos;
+        TotalSize = sumStorage;
+        TotalFreeSpace = sumFree;
+        availableStorages = cdiscos;
     }
         
 
-    public  void obtenerApps()
+    public  void getInstalledApps()
     {
         string[] aps = new string[500];
         if (Environment.OSVersion.ToString().Contains("Windows"))
@@ -85,19 +69,18 @@ class  Enviroment
                     aps[Array.IndexOf(aps, null)] = displayName;
                 }
             }
-            //devolvemos un json con las 
-            aps_instaladas = JsonSerializer.Serialize(aps);
+            installedApps = JsonSerializer.Serialize(aps);
         }
     }
 
-    public void obtenerCDWindows()
+    public void getCDWindows()
     {
         if (Environment.OSVersion.ToString().Contains("Windows"))   
         {
             RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
             string keyPath = @"Software\Microsoft\Windows NT\CurrentVersion";
             byte[] rpk = (byte[])key.OpenSubKey(keyPath).GetValue("DigitalProductId");
-            Clave_activacion = DecodeProductKey(rpk);
+            serialKey = DecodeProductKey(rpk);
         }
 
     }
@@ -144,34 +127,44 @@ class  Enviroment
     }
 
 
-    NetDiscover readRegistry()
+    void getRegistry()
     {
+        RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Records_NetExplorer");
         //si el sistema operativo es windows leemos del registry
-        if (Environment.OSVersion.ToString().Contains("Windows"))
+        if (key != null)
         {
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\NetExplorer");
-            NetDiscover info = new NetDiscover();
-            info.nro_inventario = key.GetValue("nro_inventario").ToString();
-            info.Sede = key.GetValue("Sede").ToString();
-            info.descripcion = key.GetValue("descripcion").ToString();
-            info.nro_inventario_Monitor = key.GetValue("nro_inventario_Monitor").ToString();
-            return info;
+            nroInventory = key.GetValue("nroInventory").ToString();
+            Place = key.GetValue("Place").ToString();
+            description = key.GetValue("description").ToString();
+            screen_NroInventory = key.GetValue("screen_nroInventory").ToString();
         }
         else
         {
-            return new NetDiscover();
-        }
+                nroInventory = Ask("Ingrese el numero de inventario.");            
+                Place = Ask("Ingrese el ID de Place, propiciado por  el administrador del sistema.");
+                description = Ask("Ingrese la descripcion de la ubicacion del equipo.( piso, oficina, etc)");
+                screen_NroInventory = Ask("Ingrese el numero de inventario del monitor.");
 
+                if (Environment.OSVersion.ToString().Contains("Windows"))
+                {
+                    key = Registry.CurrentUser.CreateSubKey(@"Software\Records_NetExplorer");
+
+                    key.SetValue("nroInventory", nroInventory);  
+                    key.SetValue("Place", Place);  
+                    key.SetValue("description", description);  
+                    key.SetValue("screen_nroInventory", screen_NroInventory);  
+                }
+        }
     }
 
-    private string? Pedir(string mensaje)
+    private string? Ask(string mensaje)
     {
         Console.WriteLine(mensaje);
         string? valor = Console.ReadLine();
         if (string.IsNullOrEmpty(valor))
             {
                 Console.WriteLine("El valor no puede ser nulo.");
-                return  Pedir(mensaje);
+                return  Ask(mensaje);
             }
         return valor;
     }
