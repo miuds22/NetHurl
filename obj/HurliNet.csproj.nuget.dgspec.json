@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\dp\\Desktop\\NetHurl\\HurliNet.csproj": {}
+    "C:\\Users\\dp\\Desktop\\NetHurl\\HurliNet.csproj": {}
   },
   "projects": {
-    "c:\\Users\\dp\\Desktop\\NetHurl\\HurliNet.csproj": {
+    "C:\\Users\\dp\\Desktop\\NetHurl\\HurliNet.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\dp\\Desktop\\NetHurl\\HurliNet.csproj",
+        "projectUniqueName": "C:\\Users\\dp\\Desktop\\NetHurl\\HurliNet.csproj",
         "projectName": "HurliNet",
-        "projectPath": "c:\\Users\\dp\\Desktop\\NetHurl\\HurliNet.csproj",
+        "projectPath": "C:\\Users\\dp\\Desktop\\NetHurl\\HurliNet.csproj",
         "packagesPath": "C:\\Users\\dp\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\dp\\Desktop\\NetHurl\\obj\\",
+        "outputPath": "C:\\Users\\dp\\Desktop\\NetHurl\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\dp\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -48,6 +48,10 @@
             "DotNetEnv": {
               "target": "Package",
               "version": "[3.1.1, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
             }
           },
           "imports": [

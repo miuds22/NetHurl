@@ -20,3 +20,4 @@ c:\Users\dp\Desktop\NetHurl\bin\Debug\net6.0\Microsoft.Extensions.Configuration.
 c:\Users\dp\Desktop\NetHurl\bin\Debug\net6.0\Microsoft.Extensions.Primitives.dll
 c:\Users\dp\Desktop\NetHurl\bin\Debug\net6.0\Sprache.dll
 C:\Users\dp\Desktop\NetHurl\obj\Debug\net6.0\HurliNet.csproj.Up2Date
+c:\Users\dp\Desktop\NetHurl\bin\Debug\net6.0\Newtonsoft.Json.dll

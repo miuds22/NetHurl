@@ -35,6 +35,7 @@ public class Enviroment
         {
             try
             {
+                   
                 if (drive.IsReady)
                 {
                     sumStorage = sumStorage + drive.TotalSize;
@@ -47,29 +48,51 @@ public class Enviroment
                 Console.WriteLine($"Error reading drive information: {ex.Message}");
             }
         }
-        TotalSize = sumStorage;
-        TotalFreeSpace = sumFree;
+        TotalSize = convertByteToMb(sumStorage);
+        TotalFreeSpace = convertByteToMb(sumFree);
         availableStorages = cdiscos;
     }
         
+    public int convertByteToMb(long bytes)
+    {
+        return (int)(bytes / 1024 / 1024);
+    }
 
     public  void getInstalledApps()
     {
-        string[] aps = new string[500];
+        string  aps = string.Empty;
         if (Environment.OSVersion.ToString().Contains("Windows"))
         {
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
-            foreach (string subKeyName in key.GetSubKeyNames())
+            using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"))
             {
-                RegistryKey subKey = key.OpenSubKey(subKeyName);
-                string displayName = (string)subKey.GetValue("DisplayName");
-                if (displayName != null)
+                if (key != null)
                 {
-                    // armamos una lista de las aplicaciones
-                    aps[Array.IndexOf(aps, null)] = displayName;
+                    foreach (string subKeyName in key.GetSubKeyNames())
+                    {
+                        using (RegistryKey subKey = key.OpenSubKey(subKeyName))
+                        {
+                            if (subKey != null)
+                            {
+                                string displayName = (string)subKey.GetValue("DisplayName");
+                                if (!string.IsNullOrEmpty(displayName))
+                                {
+                                    // armamos una lista de las aplicaciones
+                                    if (aps.Length > 0)
+                                    {
+                                        aps = aps + ", " + displayName;
+                                    }
+                                    else
+                                    {
+                                    aps = aps + displayName;
+                                    
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
-            installedApps = JsonSerializer.Serialize(aps);
+            installedApps = aps;
         }
     }
 

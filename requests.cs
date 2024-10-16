@@ -1,55 +1,88 @@
+using Newtonsoft.Json; 
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using session;
+using Microsoft.Win32;
 using System.Threading.Tasks;
 
 
+
+
 public class requests {
-    string Token = "";
+    string urlDomain = "http://localhost:1025";
+    string Token = GetContent("http://localhost:1025/api/Auth/marco?usuario=marco&password=e3f5c333503580edd71a1be8b24b337e&modulo=IP3%3A66");
+    private readonly HttpClient _httpClient;
 
-    public  async Task<string> getToken()
-    {
-        string T_url =  "https://infopartidos3-ws.azurewebsites.net/api/Auth/marco?usuario=marco&password=582DA691BE0FE558BA0427C47EA6969D&modulo=IP3%3A66";
-        var response = await get(T_url);
-        if ( response != null && response.IsSuccessStatusCode)
-        {
-            Console.WriteLine(response);
-        }
-        return "";
-    }
+   public requests()
+   {
+    _httpClient = new HttpClient();
+   }
 
-    public  async Task<HttpResponseMessage> get(string url)
+    public async void SendReport(NetDiscover info)
     {
         try
         {
-            var client = new HttpClient();
-            var response = await client.GetAsync(url);
-            return response;
-        } catch
-        {
-            return null;
-        }
-    }
-
-     public async Task<HttpResponseMessage> Post(string body)
-    {
-        try {
-            HttpClient client = new HttpClient();
-            string Token =  await getToken(); 
-            string url = "https://infopartidos3-ws.azurewebsites.net/api/NetDiscover";
+            //FormatPost json = new FormatPost(info);
+            string postDomain = "http://localhost:1025/api/Entidad";
+            string response =  Post(postDomain, info);
+            Console.WriteLine("Reporte enviado");
             
-            var content = new StringContent(body, Encoding.UTF8, "application/json");
-                            client.DefaultRequestHeaders.Add("User-Agent","xxxxxxxxx");      
-                            client.DefaultRequestHeaders.Add("Authorization", "Bearer " + Token);
-            var response = await client.PostAsync(url,  content);
-            return response;
-        } 
-        catch
+        } catch(Exception e)
         {
-            return null;
+            RegistryKey key = Registry.CurrentUser.CreateSubKey(@"Software\NetExplorerStatus");
+            key.SetValue( "ultimo intento fallido:" , DateTime.Now.ToString());
+            key.SetValue( "error:" , e.Message);
         }
     } 
 
+    static public  string GetContent(string url)
+    {   
+       string jsonString = string.Empty;
+       string Token = string.Empty;
+        try
+            {
+                jsonString = new WebClient().DownloadString(url);
+                 var welcome = Welcome.FromJson(jsonString); 
+                Token = welcome[0].Sesion;               
+            }
+        catch (Exception ex)
+            {Console.WriteLine(ex.Message);}
+        return Token;
+    }
+
+    
+    public string Post(string url, object data)
+    {
+        _httpClient.DefaultRequestHeaders.Add("x-sesion", Token);
+        _httpClient.DefaultRequestHeaders.Add("x-prefix", "NET");
+        // ingresamos las variables entidad y value en el body
+        var content = new StringContent( "entidad=Equipos&value=" + JsonConvert.SerializeObject(data), Encoding.UTF8, "application/x-www-form-urlencoded");
+        var response = _httpClient.PostAsync(url, content);
+        response.Result.EnsureSuccessStatusCode();
+        return response.Result.Content.ReadAsStringAsync().Result;
+    }
+}
+
+internal class FormatPost
+{
+    public NetDiscover value { get; set; }
+    public string entidad { get; set; }
+    public FormatPost(NetDiscover info)
+    {
+        this.entidad = "Equipos_IU";
+        this.value = info;
+    }
+}
+
+public interface IMyService
+{
+    Task<string> GetAsync(string url);
+    Task<string> PostAsync(string url, object data);
 }
